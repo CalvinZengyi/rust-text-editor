@@ -1,9 +1,21 @@
 use crossterm::terminal::{disable_raw_mode, enable_raw_mode, size, Clear, ClearType};
-use crossterm::cursor::MoveTo;
+use crossterm::cursor::{MoveTo, Hide, Show};
 use crossterm::execute;
 use std::io::stdout;
 
-pub struct Terminal{}
+#[derive(Copy, Clone)]
+pub struct Size {
+    pub height: u16,
+    pub width: u16,
+}
+
+#[derive(Clone, Copy)]
+pub struct Position {
+    pub x: u16,
+    pub y: u16,
+}
+
+pub struct Terminal;
 
 impl Terminal {
     pub fn terminate() -> Result<(), std::io::Error> {
@@ -19,7 +31,9 @@ impl Terminal {
     }
 
     pub fn clear_scree() -> Result<(), std::io::Error> {
+        execute!(stdout(), Hide)?;
         execute!(stdout(), Clear(ClearType::All))?;
+        execute!(stdout(), Show)?;
         Ok(())
     }
 
